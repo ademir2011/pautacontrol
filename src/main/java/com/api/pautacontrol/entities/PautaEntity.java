@@ -4,13 +4,14 @@ import com.api.pautacontrol.enums.JudgmentTypeEnum;
 import com.api.pautacontrol.enums.SystemEnum;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "pauta")
-public class PautaEntity extends AbstractEntity  {
+public class PautaEntity extends AbstractEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

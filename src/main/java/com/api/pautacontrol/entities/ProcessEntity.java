@@ -3,12 +3,14 @@ package com.api.pautacontrol.entities;
 import com.api.pautacontrol.enums.JudgmentTypeEnum;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "process")
-public class ProcessEntity extends AbstractEntity {
+public class ProcessEntity extends AbstractEntity  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -90,4 +92,6 @@ public class ProcessEntity extends AbstractEntity {
     public void setProcessHistories(List<ProcessHistoryEntity> processHistories) {
         this.processHistories = processHistories;
     }
+
+
 }

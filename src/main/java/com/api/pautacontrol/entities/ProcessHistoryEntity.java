@@ -1,6 +1,7 @@
 package com.api.pautacontrol.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
@@ -11,8 +12,19 @@ public class ProcessHistoryEntity extends AbstractEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @ManyToOne
+    private ProcessEntity processEntity;
+
     @Column
     private String description;
+
+    public ProcessEntity getProcessEntity() {
+        return processEntity;
+    }
+
+    public void setProcessEntity(ProcessEntity processEntity) {
+        this.processEntity = processEntity;
+    }
 
     public UUID getId() {
         return id;

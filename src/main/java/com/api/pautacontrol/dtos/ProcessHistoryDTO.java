@@ -1,15 +1,8 @@
-package com.api.pautacontrol.enums;
+package com.api.pautacontrol.dtos;
 
-public enum SystemEnum {
-
-    TST("TST"),
-    PJE("PJE");
+public class ProcessHistoryDTO {
 
     private String description;
-
-    SystemEnum(String description){
-        this.description = description;
-    }
 
     public String getDescription() {
         return description;
