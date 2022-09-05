@@ -2,6 +2,7 @@ package com.api.pautacontrol.dtos;
 
 import com.api.pautacontrol.enums.JudgmentTypeEnum;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 public class ProcessDTO {
