@@ -50,7 +50,7 @@ public class PautaController {
         var pauta = pautaService.findById(id);
 
         if(!pauta.isPresent()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Process Not Found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pauta Not Found");
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(pauta);
