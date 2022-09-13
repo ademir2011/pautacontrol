@@ -2,6 +2,9 @@ package com.api.pautacontrol.entities;
 
 import com.api.pautacontrol.enums.JudgmentTypeEnum;
 import com.api.pautacontrol.enums.SystemEnum;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -27,12 +30,15 @@ public class PautaEntity extends AbstractEntity {
     private Boolean addition;
 
     @Column
-    private LocalDateTime SectionDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime sectionDate;
 
     @Column
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime disclosureDate;
 
     @Column
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime publishDate;
 
     @Enumerated
@@ -78,11 +84,11 @@ public class PautaEntity extends AbstractEntity {
     }
 
     public LocalDateTime getSectionDate() {
-        return SectionDate;
+        return sectionDate;
     }
 
     public void setSectionDate(LocalDateTime sectionDate) {
-        SectionDate = sectionDate;
+        this.sectionDate = sectionDate;
     }
 
     public LocalDateTime getDisclosureDate() {

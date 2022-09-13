@@ -3,9 +3,12 @@ package com.api.pautacontrol.dtos;
 import com.api.pautacontrol.entities.ProcessEntity;
 import com.api.pautacontrol.enums.JudgmentTypeEnum;
 import com.api.pautacontrol.enums.SystemEnum;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,10 +22,16 @@ public class PautaDTO {
 
     private Boolean addition;
 
-    private LocalDateTime SectionDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime sectionDate;
 
+    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime disclosureDate;
 
+    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime publishDate;
 
     private SystemEnum systemEnum;
@@ -64,11 +73,11 @@ public class PautaDTO {
     }
 
     public LocalDateTime getSectionDate() {
-        return SectionDate;
+        return sectionDate;
     }
 
     public void setSectionDate(LocalDateTime sectionDate) {
-        SectionDate = sectionDate;
+        this.sectionDate = sectionDate;
     }
 
     public LocalDateTime getDisclosureDate() {

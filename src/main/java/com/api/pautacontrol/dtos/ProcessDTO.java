@@ -4,20 +4,22 @@ import com.api.pautacontrol.enums.JudgmentTypeEnum;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.UUID;
 
 public class ProcessDTO {
 
+    private UUID id;
     private String number;
 
     private String classType;
 
-    private MinisterEntityDTO reporterDTO;
+    private MinisterDTO ministerDTO;
 
     private JudgmentTypeEnum judgmentType;
 
-    private List<ProcessPartDTO> processParts;
+    private List<ProcessPartDTO> processPartsDTO;
 
-    private List<ProcessHistoryDTO> processHistories;
+    private List<ProcessHistoryDTO> processHistoriesDTO;
 
     public String getNumber() {
         return number;
@@ -35,12 +37,28 @@ public class ProcessDTO {
         this.classType = classType;
     }
 
-    public MinisterEntityDTO getReporterDTO() {
-        return reporterDTO;
+    public MinisterDTO getMinisterDTO() {
+        return ministerDTO;
     }
 
-    public void setReporterDTO(MinisterEntityDTO reporterDTO) {
-        this.reporterDTO = reporterDTO;
+    public void setMinisterDTO(MinisterDTO ministerDTO) {
+        this.ministerDTO = ministerDTO;
+    }
+
+    public List<ProcessPartDTO> getProcessPartsDTO() {
+        return processPartsDTO;
+    }
+
+    public void setProcessPartsDTO(List<ProcessPartDTO> processPartsDTO) {
+        this.processPartsDTO = processPartsDTO;
+    }
+
+    public List<ProcessHistoryDTO> getProcessHistoriesDTO() {
+        return processHistoriesDTO;
+    }
+
+    public void setProcessHistoriesDTO(List<ProcessHistoryDTO> processHistoriesDTO) {
+        this.processHistoriesDTO = processHistoriesDTO;
     }
 
     public JudgmentTypeEnum getJudgmentType() {
@@ -51,19 +69,13 @@ public class ProcessDTO {
         this.judgmentType = judgmentType;
     }
 
-    public List<ProcessPartDTO> getProcessParts() {
-        return processParts;
+    public UUID getId() {
+        return id;
     }
 
-    public void setProcessParts(List<ProcessPartDTO> processParts) {
-        this.processParts = processParts;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
-    public List<ProcessHistoryDTO> getProcessHistories() {
-        return processHistories;
-    }
 
-    public void setProcessHistories(List<ProcessHistoryDTO> processHistories) {
-        this.processHistories = processHistories;
-    }
 }

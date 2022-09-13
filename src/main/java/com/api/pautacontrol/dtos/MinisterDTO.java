@@ -1,6 +1,6 @@
 package com.api.pautacontrol.dtos;
 
-public class MinisterEntityDTO {
+public class MinisterDTO {
 
     private String name;
 
