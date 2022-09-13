@@ -32,7 +32,15 @@ public class MinisterService {
         this.processHistoryRepository = processHistoryRepository;
     }
 
-    public ProcessEntity addReporterToProcess(UUID id, MinisterEntity ministerEntity){
+    public ProcessEntity addReporterToProcess(UUID id, MinisterEntity ministerEntity) throws Exception {
+
+        if(ministerEntity.getName() == null || ministerEntity.getName().isEmpty()) {
+            throw new RuntimeException("Nome do ministro nulo ou vazio!");
+        }
+
+        if(id != null && !processRepository.findById(id).isPresent()){
+            throw new RuntimeException("Não existe processo salvo com este ID!");
+        }
 
         var processEntity = processRepository.findById(id).get();
 

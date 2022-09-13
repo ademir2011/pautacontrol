@@ -1,6 +1,6 @@
 package com.api.pautacontrol.controllers;
 
-import com.api.pautacontrol.dtos.PautaDTO;
+import com.api.pautacontrol.dtos.*;
 import com.api.pautacontrol.entities.PautaEntity;
 import com.api.pautacontrol.services.PautaService;
 import com.api.pautacontrol.utils.MessageProperties;
@@ -15,8 +15,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.Column;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -59,7 +61,7 @@ public class PautaController {
         var pauta = pautaService.findById(id);
 
         if(!pauta.isPresent()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pauta Not Found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pauta não encontrada!");
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(pauta);
@@ -89,73 +91,75 @@ public class PautaController {
         var pauta = pautaService.findById(id);
 
         if(!pauta.isPresent()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("pauta Not Found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pauta não encontrada!");
         }
 
         pautaService.delete(pauta.get());
 
-        return ResponseEntity.status(HttpStatus.OK).body("pauta Removed");
+        return ResponseEntity.status(HttpStatus.OK).body("Pauta Removida");
     }
 
-    @PostMapping("/incluir_processo/{idProcess}/{idPauta}")
-    public ResponseEntity<?> addProcessToPauta(@PathVariable(value = "idProcess") UUID idProcess,
-                                               @PathVariable(value = "idPauta") UUID idPauta){
+    @PostMapping("/incluir_processo")
+    public ResponseEntity<?> addProcessToPauta(@RequestBody @Valid ProcessToPautaDTO processToPautaDTO){
 
+        PautaEntity pautaEntity = null;
 
-        return ResponseEntity.status(HttpStatus.OK).body(pautaService.addProcessToPauta(idProcess, idPauta));
+        try {
+            pautaEntity = pautaService.addProcessToPauta(processToPautaDTO.getIdProcess(), processToPautaDTO.getIdPauta());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(pautaEntity);
     }
+
+
 
     @GetMapping("/search_section_date")
     public ResponseEntity<?> searchDate(@RequestBody @Valid SearchSectionDateDTO searchSectionDateDTO){
-        return ResponseEntity.status(HttpStatus.OK).body(pautaService.findBySectionDateContainingIgnoreCase(searchSectionDateDTO.getLocalDateTime()));
+
+        PautaEntity pautaEntity = null;
+
+        try {
+            pautaEntity = pautaService.findBySectionDateContainingIgnoreCase(searchSectionDateDTO.getLocalDateTime());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(pautaEntity);
     }
 
-    @GetMapping("/search_process_number")
-    public ResponseEntity<?> searchDate(@RequestBody @Valid SearchProcessNumberDTO searchProcessNumberDTO){
-        return ResponseEntity.status(HttpStatus.OK).body(pautaService.findByProcessNumberContainingIgnoreCase(searchProcessNumberDTO.getNumber()));
+    @GetMapping("/search_process_parts")
+    public ResponseEntity<?> searchProcessParts(@RequestBody @Valid SearchProcessPartsDTO searchProcessPartsDTO){
+
+        List<PautaEntity> pautaEntities = null;
+
+        try {
+            pautaEntities = pautaService.findByProcessPartContainingIgnoreCase(searchProcessPartsDTO.getLawyer(), searchProcessPartsDTO.getAggravating());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(pautaEntities);
     }
 
     @GetMapping("/search_reporter")
-    public ResponseEntity<?> searchDate(@RequestBody @Valid SearchReporterDTO searchReporterDTO){
-        return ResponseEntity.status(HttpStatus.OK).body(pautaService.findByReporterContainingIgnoreCase(searchReporterDTO.getName()));
+    public ResponseEntity<?> searchReporter(@RequestBody @Valid SearchReporterDTO searchReporterDTO){
+
+        List<PautaEntity> pautaEntities = null;
+
+        try {
+            pautaEntities = pautaService.findByReporterContainingIgnoreCase(searchReporterDTO.getName());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(pautaEntities);
     }
 
 }
 
-class SearchSectionDateDTO {
-    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime localDateTime;
 
-    public LocalDateTime getLocalDateTime() {
-        return localDateTime;
-    }
 
-    public void setLocalDateTime(LocalDateTime localDateTime) {
-        this.localDateTime = localDateTime;
-    }
-}
 
-class SearchReporterDTO {
-    private String name;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-}
-
-class SearchProcessNumberDTO {
-    private String number;
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-}

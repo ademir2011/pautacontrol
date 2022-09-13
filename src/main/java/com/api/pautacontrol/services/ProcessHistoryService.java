@@ -32,7 +32,15 @@ public class ProcessHistoryService {
         this.processHistoryRepository = processHistoryRepository;
     }
 
-    public ProcessEntity addHistoryToProcess(UUID id, ProcessHistoryEntity processHistoryEntity){
+    public ProcessEntity addHistoryToProcess(UUID id, ProcessHistoryEntity processHistoryEntity) throws Exception {
+
+        if(processHistoryEntity.getDescription() == null || processHistoryEntity.getDescription().isEmpty()) {
+            throw new RuntimeException("Valor da movimentação nula ou vazia!");
+        }
+
+        if(id != null && !processRepository.findById(id).isPresent()){
+            throw new RuntimeException("Não existe processo salvo com este ID!");
+        }
 
         var processEntity = processRepository.findById(id).get();
 

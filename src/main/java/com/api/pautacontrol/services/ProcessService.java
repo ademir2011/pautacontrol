@@ -10,6 +10,7 @@ import com.api.pautacontrol.repositories.ProcessPartRepository;
 import com.api.pautacontrol.repositories.ProcessRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +46,19 @@ public class ProcessService {
         return processRepository.findAll(pageable);
     }
 
-    public ProcessEntity save(ProcessEntity processEntity) {
+    public ProcessEntity save(ProcessEntity processEntity) throws Exception {
+
+        if( processEntity.getNumber() == null || processEntity.getNumber().isEmpty()){
+            throw new RuntimeException("O processo deve conter um número!");
+        }
+
+        if( processEntity.getId() != null && !processRepository.findById(processEntity.getId()).isPresent()){
+            throw new RuntimeException("Não existe processo salvo com este ID!");
+        }
+
+        if( processEntity.getId() == null && processEntity.getNumber() != null && processRepository.existsByNumber(processEntity.getNumber())){
+            throw new RuntimeException("Já existe um processo com essa numeração!");
+        }
 
         if(processEntity.getId() != null){
             var processEntityTemp = processRepository.findById(processEntity.getId()).get();
@@ -61,15 +74,21 @@ public class ProcessService {
     }
 
     public Optional<ProcessEntity> findById(UUID id) {
+
+        if(id == null) {
+            throw new RuntimeException("ID do processo inválido!");
+        }
+
         return processRepository.findById(id);
     }
 
-    public void delete(ProcessEntity processEntity) {
-        processRepository.delete(processEntity);
-    }
+    public void delete(UUID id) throws Exception {
 
-    public boolean existByNumber(String number) {
-        return processRepository.existsByNumber(number);
+        if( id != null && !processRepository.findById(id).isPresent()){
+            throw new RuntimeException("Não existe processo salvo com este ID!");
+        }
+
+        processRepository.delete(processRepository.findById(id).get());
     }
 
 }

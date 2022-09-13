@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -37,7 +38,6 @@ public class ProcessController {
     private final ProcessPartService processPartService;
     private final ProcessHistoryService processHistoryService;
     private final MinisterService ministerService;
-
 
     public ProcessController(
         ProcessService processService,
@@ -56,14 +56,16 @@ public class ProcessController {
     @PostMapping
     public ResponseEntity<?> save(@RequestBody @Valid ProcessDTO processDTO){
 
-        if(processService.existByNumber(processDTO.getNumber())){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Já existe um processo com essa numeração!");
+        var processEntity = new ProcessEntity();
+        BeanUtils.copyProperties(processDTO, processEntity);
+
+        try {
+            processEntity = processService.save(processEntity);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
 
-        var process = new ProcessEntity();
-        BeanUtils.copyProperties(processDTO, process);
-
-        return ResponseEntity.status(HttpStatus.OK).body( processService.save(process) );
+        return ResponseEntity.status(HttpStatus.OK).body( processEntity );
     }
 
     @GetMapping
@@ -74,13 +76,19 @@ public class ProcessController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findOne(@PathVariable(value = "id") UUID id){
 
-        var process = processService.findById(id);
+        Optional<ProcessEntity> processEntity = null;
 
-        if(!process.isPresent()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Process Not Found");
+        try {
+            processEntity = processService.findById(id);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(process);
+        if(!processEntity.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body("{}");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(processEntity);
     }
 
     @PutMapping("/{id}")
@@ -88,25 +96,29 @@ public class ProcessController {
 
         processDTO.setId(id);
 
-        var process = new ProcessEntity();
-        BeanUtils.copyProperties(processDTO, process);
+        var processEntity = new ProcessEntity();
+        BeanUtils.copyProperties(processDTO, processEntity);
 
-        return ResponseEntity.status(HttpStatus.OK).body( processService.save(process) );
+        try {
+            processEntity = processService.save(processEntity);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body( processEntity );
 
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable(value = "id") UUID id){
 
-        var process = processService.findById(id);
-
-        if(!process.isPresent()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Process Not Found");
+        try {
+            processService.delete(id);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
 
-        processService.delete(process.get());
-
-        return ResponseEntity.status(HttpStatus.OK).body("Proccess Removed");
+        return ResponseEntity.status(HttpStatus.OK).body("Processo removido com sucesso!");
     }
 
     @PostMapping("/adicionar_relator/{id}")
@@ -115,7 +127,16 @@ public class ProcessController {
         var ministerEntity = new MinisterEntity();
         BeanUtils.copyProperties(ministerEntityDTO, ministerEntity);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ministerService.addReporterToProcess(id, ministerEntity));
+        var processEntity = new ProcessEntity();
+
+        try {
+            processEntity = ministerService.addReporterToProcess(id, ministerEntity);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(processEntity);
+
     }
 
     @PostMapping("/adicionar_parte/{id}")
@@ -124,7 +145,15 @@ public class ProcessController {
         var processPartEntity = new ProcessPartEntity();
         BeanUtils.copyProperties(processPartDTO, processPartEntity);
 
-        return ResponseEntity.status(HttpStatus.OK).body(processPartService.addPartToProcess(id, processPartEntity));
+        var processEntity = new ProcessEntity();
+
+        try {
+            processEntity = processPartService.addPartToProcess(id, processPartEntity);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(processEntity);
     }
 
     @PostMapping("/adicionar_history/{id}")
@@ -133,7 +162,15 @@ public class ProcessController {
         var processHistoryEntity = new ProcessHistoryEntity();
         BeanUtils.copyProperties(processHistoryDTO, processHistoryEntity);
 
-        return ResponseEntity.status(HttpStatus.OK).body(processHistoryService.addHistoryToProcess(id, processHistoryEntity));
+        var processEntity = new ProcessEntity();
+
+        try {
+            processEntity = processHistoryService.addHistoryToProcess(id, processHistoryEntity);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(processEntity);
     }
 
 }
